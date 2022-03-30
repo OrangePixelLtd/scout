@@ -7,7 +7,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Facades\Config;
 use Laravel\Scout\Contracts\PaginatesEloquentModels;
 
 class Builder
@@ -98,7 +97,7 @@ class Builder
         $this->model = $model;
         $this->query = $query;
         $this->callback = $callback;
-        $this->parameterName = 'query';
+        $this->parameterName = config('scout.parameter_name', 'query');
 
         if ($softDelete) {
             $this->wheres['__soft_deleted'] = 0;
