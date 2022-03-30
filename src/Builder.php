@@ -97,7 +97,12 @@ class Builder
         $this->model = $model;
         $this->query = $query;
         $this->callback = $callback;
-        $this->parameterName = config('scout.parameter_name', 'query');
+
+        if (config('scout.parameter_name') !== 'query') {
+            $this->parameterName = config('scout.parameter_name');
+        } else {
+            $this->parameterName = 'query';
+        }
 
         if ($softDelete) {
             $this->wheres['__soft_deleted'] = 0;
