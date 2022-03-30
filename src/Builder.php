@@ -48,6 +48,13 @@ class Builder
      */
     public $index;
 
+     /**
+     * The custom parameter name for the query string.
+     *
+     * @var string
+     */
+    public $parameterName;
+
     /**
      * The "where" constraints added to the query.
      *
@@ -90,6 +97,12 @@ class Builder
         $this->model = $model;
         $this->query = $query;
         $this->callback = $callback;
+
+        if (config('scout.parameter_name') !== 'query') {
+            $this->parameterName = config('scout.parameter_name');
+        } else {
+            $this->parameterName = 'query';
+        }
 
         if ($softDelete) {
             $this->wheres['__soft_deleted'] = 0;
@@ -297,7 +310,7 @@ class Builder
         $engine = $this->engine();
 
         if ($engine instanceof PaginatesEloquentModels) {
-            return $engine->simplePaginate($this, $perPage, $page)->appends('query', $this->query);
+            return $engine->simplePaginate($this, $perPage, $page)->appends($this->parameterName, $this->query);
         }
 
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
@@ -318,7 +331,7 @@ class Builder
             ],
         ])->hasMorePagesWhen(($perPage * $page) < $engine->getTotalCount($rawResults));
 
-        return $paginator->appends('query', $this->query);
+        return $paginator->appends($this->parameterName, $this->query);
     }
 
     /**
@@ -334,7 +347,7 @@ class Builder
         $engine = $this->engine();
 
         if ($engine instanceof PaginatesEloquentModels) {
-            return $engine->simplePaginate($this, $perPage, $page)->appends('query', $this->query);
+            return $engine->simplePaginate($this, $perPage, $page)->appends($this->parameterName, $this->query);
         }
 
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
@@ -353,7 +366,7 @@ class Builder
             ],
         ])->hasMorePagesWhen(($perPage * $page) < $engine->getTotalCount($results));
 
-        return $paginator->appends('query', $this->query);
+        return $paginator->appends($this->parameterName, $this->query);
     }
 
     /**
@@ -369,7 +382,7 @@ class Builder
         $engine = $this->engine();
 
         if ($engine instanceof PaginatesEloquentModels) {
-            return $engine->paginate($this, $perPage, $page)->appends('query', $this->query);
+            return $engine->paginate($this, $perPage, $page)->appends($this->parameterName, $this->query);
         }
 
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
@@ -389,7 +402,7 @@ class Builder
                 'path' => Paginator::resolveCurrentPath(),
                 'pageName' => $pageName,
             ],
-        ])->appends('query', $this->query);
+        ])->appends($this->parameterName, $this->query);
     }
 
     /**
@@ -405,7 +418,7 @@ class Builder
         $engine = $this->engine();
 
         if ($engine instanceof PaginatesEloquentModels) {
-            return $engine->paginate($this, $perPage, $page)->appends('query', $this->query);
+            return $engine->paginate($this, $perPage, $page)->appends($this->parameterName, $this->query);
         }
 
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
@@ -423,7 +436,7 @@ class Builder
                 'path' => Paginator::resolveCurrentPath(),
                 'pageName' => $pageName,
             ],
-        ])->appends('query', $this->query);
+        ])->appends($this->parameterName, $this->query);
     }
 
     /**
